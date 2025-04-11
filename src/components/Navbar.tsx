@@ -27,7 +27,7 @@ export const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <MapPin size={24} className="text-white" />
-            <span className="font-bold text-lg text-white">ParkBCN</span>
+            <span className="font-bold text-lg text-white">ParkNow</span>
           </Link>
           
           {/* Desktop Navigation */}
