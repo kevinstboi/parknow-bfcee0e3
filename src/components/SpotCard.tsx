@@ -17,8 +17,8 @@ export const SpotCard = ({ id, location, distance, availableSince, reportedBy }:
   
   const handleGetDirections = () => {
     toast({
-      title: "Getting directions",
-      description: `Directions to ${location} loading...`,
+      title: "Obteniendo direcciones",
+      description: `Cargando direcciones a ${location}...`,
     });
   };
   
@@ -34,18 +34,18 @@ export const SpotCard = ({ id, location, distance, availableSince, reportedBy }:
       
       <div className="flex items-center text-gray-500 text-sm mb-3">
         <Clock size={14} className="mr-1" />
-        <span>Available since {availableSince}</span>
+        <span>Disponible desde {availableSince}</span>
       </div>
       
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-500">Reported by {reportedBy}</span>
+        <span className="text-xs text-gray-500">Reportado por {reportedBy}</span>
         <Button 
           size="sm" 
           className="flex items-center bg-barcelona-blue hover:bg-barcelona-blue/90"
           onClick={handleGetDirections}
         >
           <Navigation size={14} className="mr-1" />
-          <span>Go</span>
+          <span>Ir</span>
         </Button>
       </div>
     </div>

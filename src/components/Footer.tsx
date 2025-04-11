@@ -14,10 +14,10 @@ export const Footer = () => {
           </div>
           
           <div className="flex flex-col md:flex-row items-center md:space-x-6 text-sm text-gray-600">
-            <Link to="/about" className="mb-2 md:mb-0 hover:text-barcelona-blue">About</Link>
-            <Link to="/privacy" className="mb-2 md:mb-0 hover:text-barcelona-blue">Privacy Policy</Link>
-            <Link to="/terms" className="mb-2 md:mb-0 hover:text-barcelona-blue">Terms of Service</Link>
-            <Link to="/contact" className="hover:text-barcelona-blue">Contact</Link>
+            <Link to="/about" className="mb-2 md:mb-0 hover:text-barcelona-blue">Acerca de</Link>
+            <Link to="/privacy" className="mb-2 md:mb-0 hover:text-barcelona-blue">Política de Privacidad</Link>
+            <Link to="/terms" className="mb-2 md:mb-0 hover:text-barcelona-blue">Términos de Servicio</Link>
+            <Link to="/contact" className="hover:text-barcelona-blue">Contacto</Link>
           </div>
           
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
@@ -31,7 +31,7 @@ export const Footer = () => {
         </div>
         
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} ParkBCN. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ParkBCN. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

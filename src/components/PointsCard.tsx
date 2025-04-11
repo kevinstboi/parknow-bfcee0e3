@@ -30,15 +30,15 @@ export const PointsCard = ({ totalPoints, level, nextLevelPoints, recentActiviti
             <Trophy size={28} className="text-barcelona-blue" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">{totalPoints} Points</h2>
-            <p className="text-gray-500">Current level: {level}</p>
+            <h2 className="text-2xl font-bold text-gray-800">{totalPoints} Puntos</h2>
+            <p className="text-gray-500">Nivel actual: {level}</p>
           </div>
         </div>
         
         <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full">
           <Star size={18} className="text-barcelona-orange mr-2" />
           <span className="text-sm font-medium">
-            {nextLevelPoints - totalPoints} points to next level
+            {nextLevelPoints - totalPoints} puntos para el siguiente nivel
           </span>
         </div>
       </div>
@@ -55,7 +55,7 @@ export const PointsCard = ({ totalPoints, level, nextLevelPoints, recentActiviti
       
       {/* Recent Activities */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
+        <h3 className="text-lg font-semibold mb-4">Actividades Recientes</h3>
         
         {recentActivities.length > 0 ? (
           <div className="space-y-4">
@@ -84,8 +84,8 @@ export const PointsCard = ({ totalPoints, level, nextLevelPoints, recentActiviti
           </div>
         ) : (
           <div className="text-center py-6 text-gray-500">
-            <p>No recent activities</p>
-            <p className="text-sm mt-2">Report parking spots to earn points!</p>
+            <p>No hay actividades recientes</p>
+            <p className="text-sm mt-2">¡Reporta plazas de aparcamiento para ganar puntos!</p>
           </div>
         )}
       </div>

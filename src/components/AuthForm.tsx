@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,13 +28,13 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       
       if (type === 'login') {
         toast({
-          title: "Logged in successfully!",
-          description: "Welcome back to ParkBCN.",
+          title: "¡Sesión iniciada correctamente!",
+          description: "Bienvenido de nuevo a ParkBCN.",
         });
       } else {
         toast({
-          title: "Account created successfully!",
-          description: "Welcome to ParkBCN. Start finding and reporting parking spots!",
+          title: "¡Cuenta creada correctamente!",
+          description: "Bienvenido a ParkBCN. ¡Comienza a encontrar y reportar plazas de aparcamiento!",
         });
       }
       
@@ -50,12 +51,12 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           <span className="font-bold text-lg ml-2">ParkBCN</span>
         </div>
         <h1 className="text-2xl font-bold">
-          {type === 'login' ? 'Welcome Back' : 'Create an Account'}
+          {type === 'login' ? 'Bienvenido de Nuevo' : 'Crear una Cuenta'}
         </h1>
         <p className="text-gray-600 mt-1">
           {type === 'login' 
-            ? 'Sign in to access your parking spots and points' 
-            : 'Join our community and start finding parking spots'}
+            ? 'Inicia sesión para acceder a tus plazas de aparcamiento y puntos' 
+            : 'Únete a nuestra comunidad y comienza a encontrar plazas de aparcamiento'}
         </p>
       </div>
       
@@ -63,14 +64,14 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         {type === 'signup' && (
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Full Name
+              Nombre Completo
             </label>
             <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
+              placeholder="Introduce tu nombre"
               required
               className="rounded-lg"
             />
@@ -79,14 +80,14 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email Address
+            Correo Electrónico
           </label>
           <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            placeholder="Introduce tu correo electrónico"
             required
             className="rounded-lg"
           />
@@ -94,14 +95,14 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         
         <div className="space-y-2">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            Contraseña
           </label>
           <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={type === 'login' ? 'Enter your password' : 'Create a password'}
+            placeholder={type === 'login' ? 'Introduce tu contraseña' : 'Crea una contraseña'}
             required
             className="rounded-lg"
           />
@@ -109,7 +110,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           {type === 'login' && (
             <div className="text-right">
               <Link to="/forgot-password" className="text-sm text-barcelona-blue hover:underline">
-                Forgot password?
+                ¿Olvidaste la contraseña?
               </Link>
             </div>
           )}
@@ -123,22 +124,22 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           {isSubmitting ? (
             <div className="flex items-center justify-center">
               <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mr-2"></div>
-              {type === 'login' ? 'Signing In...' : 'Creating Account...'}
+              {type === 'login' ? 'Iniciando Sesión...' : 'Creando Cuenta...'}
             </div>
           ) : (
-            type === 'login' ? 'Sign In' : 'Create Account'
+            type === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'
           )}
         </Button>
       </form>
       
       <div className="mt-6 text-center">
         <p className="text-gray-600">
-          {type === 'login' ? "Don't have an account?" : "Already have an account?"}
+          {type === 'login' ? "¿No tienes una cuenta?" : "¿Ya tienes una cuenta?"}
           <Link 
             to={type === 'login' ? '/signup' : '/login'} 
             className="ml-1 text-barcelona-blue hover:underline font-medium"
           >
-            {type === 'login' ? 'Sign Up' : 'Sign In'}
+            {type === 'login' ? 'Regístrate' : 'Iniciar Sesión'}
           </Link>
         </p>
       </div>

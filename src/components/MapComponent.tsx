@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 
 // Mock data for parking spots
 const mockParkingSpots = [
-  { id: 1, lat: 41.3851, lng: 2.1734, available: true, updatedAt: '10 mins ago' },
-  { id: 2, lat: 41.3870, lng: 2.1698, available: true, updatedAt: '15 mins ago' },
-  { id: 3, lat: 41.3917, lng: 2.1649, available: true, updatedAt: '30 mins ago' },
-  { id: 4, lat: 41.3948, lng: 2.1545, available: true, updatedAt: '1 hour ago' },
-  { id: 5, lat: 41.4012, lng: 2.1741, available: true, updatedAt: '2 hours ago' },
+  { id: 1, lat: 41.3851, lng: 2.1734, available: true, updatedAt: 'hace 10 mins' },
+  { id: 2, lat: 41.3870, lng: 2.1698, available: true, updatedAt: 'hace 15 mins' },
+  { id: 3, lat: 41.3917, lng: 2.1649, available: true, updatedAt: 'hace 30 mins' },
+  { id: 4, lat: 41.3948, lng: 2.1545, available: true, updatedAt: 'hace 1 hora' },
+  { id: 5, lat: 41.4012, lng: 2.1741, available: true, updatedAt: 'hace 2 horas' },
 ];
 
 export const MapComponent = () => {
@@ -29,8 +29,8 @@ export const MapComponent = () => {
       const timer = setTimeout(() => {
         setMapLoaded(true);
         toast({
-          title: "Map loaded successfully",
-          description: "Showing available parking spots in Barcelona.",
+          title: "Mapa cargado correctamente",
+          description: "Mostrando plazas de aparcamiento disponibles en Barcelona.",
         });
       }, 1500);
       
@@ -40,8 +40,8 @@ export const MapComponent = () => {
 
   const handleUseCurrentLocation = () => {
     toast({
-      title: "Using current location",
-      description: "Finding parking spots near you...",
+      title: "Usando ubicación actual",
+      description: "Buscando plazas de aparcamiento cerca de ti...",
     });
   };
 
@@ -54,13 +54,13 @@ export const MapComponent = () => {
     if (mapApiKey.trim()) {
       setMapApiKeyEntered(true);
       toast({
-        title: "Map API key set",
-        description: "Initializing the map...",
+        title: "Clave API del mapa configurada",
+        description: "Inicializando el mapa...",
       });
     } else {
       toast({
         title: "Error",
-        description: "Please enter a valid API key",
+        description: "Por favor, introduce una clave API válida",
         variant: "destructive",
       });
     }
@@ -71,23 +71,23 @@ export const MapComponent = () => {
       {!mapApiKeyEntered ? (
         <div className="flex flex-col items-center justify-center h-full p-4">
           <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-center">Enter Map API Key</h3>
+            <h3 className="text-lg font-semibold mb-4 text-center">Introduce la Clave API del Mapa</h3>
             <p className="text-gray-600 mb-4 text-sm">
-              To use the map functionality, please enter your OpenStreetMap API key:
+              Para usar la funcionalidad del mapa, por favor introduce tu clave API de OpenStreetMap:
             </p>
             <form onSubmit={handleSubmitApiKey}>
               <input
                 type="text"
                 value={mapApiKey}
                 onChange={(e) => setMapApiKey(e.target.value)}
-                placeholder="Enter your OpenStreetMap API key"
+                placeholder="Introduce tu clave API de OpenStreetMap"
                 className="input-search mb-4"
               />
               <Button 
                 type="submit" 
                 className="w-full bg-barcelona-blue text-white"
               >
-                Set API Key
+                Configurar Clave API
               </Button>
             </form>
           </div>
@@ -97,7 +97,7 @@ export const MapComponent = () => {
           {!mapLoaded ? (
             <div className="flex flex-col items-center justify-center h-full">
               <div className="w-16 h-16 border-t-4 border-barcelona-blue rounded-full animate-spin"></div>
-              <p className="mt-4 text-gray-600">Loading map...</p>
+              <p className="mt-4 text-gray-600">Cargando mapa...</p>
             </div>
           ) : (
             <>
@@ -128,20 +128,20 @@ export const MapComponent = () => {
                       {openSpotInfoId === spot.id && (
                         <div className="absolute z-10 bg-white rounded-lg shadow-lg p-3 w-48 left-1/2 transform -translate-x-1/2 mt-1 animate-fade-in">
                           <div className="text-sm">
-                            <div className="font-semibold mb-1">Available Spot</div>
-                            <div className="text-gray-600 text-xs mb-2">Updated {spot.updatedAt}</div>
+                            <div className="font-semibold mb-1">Plaza Disponible</div>
+                            <div className="text-gray-600 text-xs mb-2">Actualizado {spot.updatedAt}</div>
                             <Button 
                               size="sm" 
                               className="w-full bg-barcelona-blue text-white text-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toast({
-                                  title: "Directions",
-                                  description: "Getting directions to this parking spot...",
+                                  title: "Direcciones",
+                                  description: "Obteniendo direcciones a esta plaza de aparcamiento...",
                                 });
                               }}
                             >
-                              Get Directions
+                              Obtener Direcciones
                             </Button>
                           </div>
                         </div>
@@ -182,14 +182,14 @@ export const MapComponent = () => {
             <div className="bg-white rounded-full shadow-lg p-1 flex items-center">
               <input 
                 type="text"
-                placeholder="Search for parking near..."
+                placeholder="Buscar aparcamiento cerca de..."
                 className="border-none flex-grow py-2 px-4 rounded-full focus:outline-none text-sm md:text-base"
               />
               <Button
                 className="rounded-full bg-barcelona-blue hover:bg-barcelona-blue/90"
                 size="sm"
               >
-                Search
+                Buscar
               </Button>
             </div>
           </div>

@@ -19,8 +19,8 @@ export const Navbar = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     toast({
-      title: "Logged out successfully",
-      description: "You have been logged out of your account."
+      title: "Sesión cerrada correctamente",
+      description: "Has cerrado sesión en tu cuenta."
     });
   };
 
@@ -37,16 +37,16 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           {!isMobile && (
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className="text-gray-600 hover:text-barcelona-blue font-medium">Home</Link>
-              <Link to="/map" className="text-gray-600 hover:text-barcelona-blue font-medium">Find Spots</Link>
-              <Link to="/report" className="text-gray-600 hover:text-barcelona-blue font-medium">Report Spot</Link>
-              <Link to="/points" className="text-gray-600 hover:text-barcelona-blue font-medium">My Points</Link>
+              <Link to="/" className="text-gray-600 hover:text-barcelona-blue font-medium">Inicio</Link>
+              <Link to="/map" className="text-gray-600 hover:text-barcelona-blue font-medium">Buscar Plazas</Link>
+              <Link to="/report" className="text-gray-600 hover:text-barcelona-blue font-medium">Reportar Plaza</Link>
+              <Link to="/points" className="text-gray-600 hover:text-barcelona-blue font-medium">Mis Puntos</Link>
               
               {isLoggedIn ? (
                 <div className="flex items-center space-x-4">
                   <Link to="/profile" className="flex items-center space-x-2 text-barcelona-blue">
                     <User size={20} />
-                    <span>Profile</span>
+                    <span>Perfil</span>
                   </Link>
                   <Button 
                     variant="ghost"
@@ -54,16 +54,16 @@ export const Navbar = () => {
                     onClick={handleLogout}
                   >
                     <LogOut size={20} />
-                    <span>Logout</span>
+                    <span>Cerrar Sesión</span>
                   </Button>
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
                   <Link to="/login">
-                    <Button variant="outline" className="rounded-full">Login</Button>
+                    <Button variant="outline" className="rounded-full">Iniciar Sesión</Button>
                   </Link>
                   <Link to="/signup">
-                    <Button className="bg-barcelona-blue rounded-full text-white hover:bg-barcelona-blue/90">Sign Up</Button>
+                    <Button className="bg-barcelona-blue rounded-full text-white hover:bg-barcelona-blue/90">Registrarse</Button>
                   </Link>
                 </div>
               )}
@@ -85,16 +85,16 @@ export const Navbar = () => {
         {isMobile && isOpen && (
           <div className="md:hidden pt-4 pb-2 animate-fade-in">
             <div className="flex flex-col space-y-4">
-              <Link to="/" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Home</Link>
-              <Link to="/map" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Find Spots</Link>
-              <Link to="/report" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Report Spot</Link>
-              <Link to="/points" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>My Points</Link>
+              <Link to="/" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Inicio</Link>
+              <Link to="/map" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Buscar Plazas</Link>
+              <Link to="/report" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Reportar Plaza</Link>
+              <Link to="/points" className="text-gray-600 hover:text-barcelona-blue font-medium py-2" onClick={() => setIsOpen(false)}>Mis Puntos</Link>
               
               {isLoggedIn ? (
                 <>
                   <Link to="/profile" className="text-barcelona-blue flex items-center space-x-2 py-2" onClick={() => setIsOpen(false)}>
                     <User size={20} />
-                    <span>Profile</span>
+                    <span>Perfil</span>
                   </Link>
                   <button 
                     className="text-red-500 flex items-center space-x-2 py-2"
@@ -104,16 +104,16 @@ export const Navbar = () => {
                     }}
                   >
                     <LogOut size={20} />
-                    <span>Logout</span>
+                    <span>Cerrar Sesión</span>
                   </button>
                 </>
               ) : (
                 <div className="flex flex-col space-y-2 pt-2">
                   <Link to="/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full rounded-full">Login</Button>
+                    <Button variant="outline" className="w-full rounded-full">Iniciar Sesión</Button>
                   </Link>
                   <Link to="/signup" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full bg-barcelona-blue rounded-full text-white hover:bg-barcelona-blue/90">Sign Up</Button>
+                    <Button className="w-full bg-barcelona-blue rounded-full text-white hover:bg-barcelona-blue/90">Registrarse</Button>
                   </Link>
                 </div>
               )}

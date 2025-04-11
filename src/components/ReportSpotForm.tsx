@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -18,8 +19,8 @@ export const ReportSpotForm = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       toast({
-        title: "Spot reported successfully!",
-        description: "You've earned 5 points for your contribution.",
+        title: "¡Plaza reportada con éxito!",
+        description: "Has ganado 5 puntos por tu contribución.",
       });
       
       // Reset form
@@ -32,16 +33,16 @@ export const ReportSpotForm = () => {
   const handleUseMyLocation = () => {
     setUseCurrentLocation(true);
     toast({
-      title: "Using current location",
+      title: "Usando ubicación actual",
     });
   };
   
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">Report a Free Parking Spot</h2>
+      <h2 className="text-xl font-semibold mb-4">Reportar una Plaza Libre</h2>
       
       <div className="mb-6">
-        <label className="block text-gray-700 mb-2 font-medium">Location</label>
+        <label className="block text-gray-700 mb-2 font-medium">Ubicación</label>
         
         <div className="flex items-center mb-3">
           <button
@@ -54,7 +55,7 @@ export const ReportSpotForm = () => {
             onClick={handleUseMyLocation}
           >
             <Navigation size={16} className="mr-2" />
-            My Location
+            Mi Ubicación
           </button>
           
           <button
@@ -67,7 +68,7 @@ export const ReportSpotForm = () => {
             onClick={() => setUseCurrentLocation(false)}
           >
             <MapPin size={16} className="mr-2" />
-            Custom Address
+            Dirección Personalizada
           </button>
         </div>
         
@@ -76,7 +77,7 @@ export const ReportSpotForm = () => {
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Enter street address"
+            placeholder="Introduce la dirección"
             className="input-search"
             required={!useCurrentLocation}
           />
@@ -85,13 +86,13 @@ export const ReportSpotForm = () => {
       
       <div className="mb-6">
         <label htmlFor="notes" className="block text-gray-700 mb-2 font-medium">
-          Notes (Optional)
+          Notas (Opcional)
         </label>
         <textarea
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any details about this spot? (e.g., 'Near the corner', 'Large enough for SUV')"
+          placeholder="¿Algún detalle sobre esta plaza? (ej., 'Cerca de la esquina', 'Lo suficientemente grande para un SUV')"
           className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-barcelona-blue h-24 resize-none"
         />
       </div>
@@ -104,15 +105,15 @@ export const ReportSpotForm = () => {
         {isSubmitting ? (
           <div className="flex items-center">
             <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mr-2"></div>
-            Reporting Spot...
+            Reportando Plaza...
           </div>
         ) : (
-          'Report Spot'
+          'Reportar Plaza'
         )}
       </Button>
       
       <p className="text-center text-sm text-gray-500 mt-4">
-        You'll earn 5 points for reporting an available spot!
+        ¡Ganarás 5 puntos por reportar una plaza disponible!
       </p>
     </form>
   );

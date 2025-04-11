@@ -7,7 +7,7 @@ const MapPage = () => {
   return (
     <Layout>
       <div className="container px-4 mx-auto py-6">
-        <h1 className="text-2xl font-bold mb-4">Find Parking Spots</h1>
+        <h1 className="text-2xl font-bold mb-4">Buscar Plazas de Aparcamiento</h1>
         <div className="mb-8">
           <MapComponent />
         </div>
