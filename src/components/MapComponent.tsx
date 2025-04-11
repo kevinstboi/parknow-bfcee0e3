@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { MapPin, Navigation, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
 // Mock data for parking spots

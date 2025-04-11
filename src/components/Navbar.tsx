@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
 import { Menu, X, MapPin, User, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@/hooks/use-toast';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
