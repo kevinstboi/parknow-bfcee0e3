@@ -4,6 +4,16 @@ import { MapPin, Navigation, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { 
+  Drawer, 
+  DrawerContent, 
+  DrawerTrigger, 
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose
+} from '@/components/ui/drawer';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
 
 // Clave de API de Google Maps
@@ -34,6 +44,7 @@ export const MapComponent = () => {
   const { toast } = useToast();
   const [openSpotInfoId, setOpenSpotInfoId] = useState<number | null>(null);
   const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  const [selectedSpot, setSelectedSpot] = useState<any>(null);
   
   // Cargar la API de Google Maps
   const { isLoaded, loadError } = useJsApiLoader({
@@ -53,6 +64,8 @@ export const MapComponent = () => {
   };
   
   const toggleSpotInfo = (spotId: number) => {
+    const spot = mockParkingSpots.find(s => s.id === spotId);
+    setSelectedSpot(spot);
     setOpenSpotInfoId(openSpotInfoId === spotId ? null : spotId);
   };
 
@@ -116,7 +129,7 @@ export const MapComponent = () => {
   }
 
   return (
-    <div className="relative h-[calc(100vh-12rem)] md:h-[calc(100vh-10rem)] bg-gray-100 rounded-xl overflow-hidden">
+    <div className="relative h-[calc(100vh-15rem)] md:h-[calc(100vh-13rem)] bg-gray-100 rounded-xl overflow-hidden">
       {/* Contenedor del Mapa */}
       <div className="w-full h-full">
         <GoogleMap
@@ -157,49 +170,26 @@ export const MapComponent = () => {
                 scaledSize: new google.maps.Size(36, 36),
                 anchor: new google.maps.Point(18, 36),
               }}
-            >
-              {openSpotInfoId === spot.id && (
-                <InfoWindow onCloseClick={() => setOpenSpotInfoId(null)}>
-                  <div className="p-1">
-                    <div className="font-semibold mb-1">Plaza Disponible</div>
-                    <div className="text-gray-600 text-xs mb-2">Actualizado {spot.updatedAt}</div>
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-barcelona-blue text-white text-xs"
-                      onClick={() => {
-                        toast({
-                          title: "Direcciones",
-                          description: "Obteniendo direcciones a esta plaza de aparcamiento...",
-                        });
-                      }}
-                    >
-                      Obtener Direcciones
-                    </Button>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
+            />
           ))}
         </GoogleMap>
       </div>
 
-      {/* Controles del Mapa */}
-      <div className="absolute bottom-4 left-0 right-0 px-4 flex justify-center">
-        <div className="bg-white rounded-full shadow-lg p-1 flex items-center">
+      {/* Controles del Mapa - Ahora adaptados a formato app */}
+      <div className="absolute bottom-20 right-4">
+        <div className="flex flex-col space-y-2">
           <Button
-            variant="ghost"
             size="icon"
-            className="rounded-full text-barcelona-blue"
+            className="h-12 w-12 rounded-full bg-barcelona-blue shadow-lg"
             onClick={handleUseCurrentLocation}
           >
             <Navigation size={20} />
           </Button>
-          <div className="h-6 border-l border-gray-200 mx-1"></div>
+          
           <Link to="/report">
             <Button
-              variant="ghost"
               size="icon"
-              className="rounded-full text-barcelona-orange"
+              className="h-12 w-12 rounded-full bg-barcelona-orange shadow-lg"
             >
               <Plus size={20} />
             </Button>
@@ -207,22 +197,53 @@ export const MapComponent = () => {
         </div>
       </div>
 
-      {/* Barra de Búsqueda */}
+      {/* Barra de Búsqueda - Adaptada a formato app */}
       <div className="absolute top-4 left-0 right-0 px-4">
         <div className="bg-white rounded-full shadow-lg p-1 flex items-center">
           <input 
             type="text"
             placeholder="Buscar aparcamiento cerca de..."
-            className="border-none flex-grow py-2 px-4 rounded-full focus:outline-none text-sm md:text-base"
+            className="border-none flex-grow py-2 px-4 rounded-full focus:outline-none text-sm"
           />
           <Button
-            className="rounded-full bg-barcelona-blue hover:bg-barcelona-blue/90"
             size="sm"
+            className="rounded-full bg-barcelona-blue hover:bg-barcelona-blue/90"
           >
-            Buscar
+            <MapPin size={16} />
           </Button>
         </div>
       </div>
+
+      {/* Drawer para mostrar detalles de la plaza - Típico de apps móviles */}
+      <Drawer open={!!selectedSpot} onOpenChange={(open) => !open && setSelectedSpot(null)}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Plaza de Aparcamiento</DrawerTitle>
+            <DrawerDescription>
+              {selectedSpot?.updatedAt && `Última actualización: ${selectedSpot.updatedAt}`}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                <span>Disponible ahora</span>
+              </div>
+              <p className="text-sm text-gray-500">
+                Esta plaza de aparcamiento está disponible para su uso. Asegúrate de comprobar las restricciones locales antes de aparcar.
+              </p>
+            </div>
+          </div>
+          <DrawerFooter>
+            <Button className="w-full bg-barcelona-blue text-white">
+              Obtener Direcciones
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cerrar</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };

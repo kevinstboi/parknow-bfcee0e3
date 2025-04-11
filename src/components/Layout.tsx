@@ -9,9 +9,9 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-barcelona-light">
       <Navbar />
-      <main className="flex-grow pb-16">
+      <main className="flex-grow pb-16 px-0">
         {children}
       </main>
       <Footer />

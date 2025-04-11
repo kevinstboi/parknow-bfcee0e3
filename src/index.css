@@ -76,6 +76,25 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  /* Eliminar barras de desplazamiento para una experiencia más app */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Para iOS - desactivar el comportamiento de rebote del scroll */
+  html {
+    overflow: hidden;
+    height: 100%;
+  }
+
+  body {
+    overflow: auto;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -99,4 +118,37 @@
   .map-container {
     @apply w-full h-full rounded-xl overflow-hidden;
   }
+
+  /* Clases específicas para UI tipo app */
+  .app-nav-button {
+    @apply w-12 h-12 rounded-full flex items-center justify-center shadow-lg;
+  }
+
+  .app-bottom-bar {
+    @apply fixed bottom-0 left-0 right-0 bg-white py-2 px-4 flex justify-around items-center shadow-lg z-20;
+  }
+
+  .app-tab {
+    @apply flex flex-col items-center justify-center text-xs font-medium;
+  }
+}
+
+/* Animaciones específicas para una experiencia de tipo app */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* Status bar para dar aspecto de app */
+.status-bar {
+  height: env(safe-area-inset-top);
+  background-color: var(--background);
 }
