@@ -35,7 +35,7 @@ export const Navbar = () => {
               <Link to="/" className="text-white hover:text-opacity-80 font-medium">Inicio</Link>
               <Link to="/map" className="text-white hover:text-opacity-80 font-medium">Buscar Plazas</Link>
               <Link to="/report" className="text-white hover:text-opacity-80 font-medium">Reportar Plaza</Link>
-              <Link to="/points" className="text-white hover:text-opacity-80 font-medium">Karma</Link>
+              <Link to="/points" className="text-white hover:text-opacity-80 font-medium">Mis Puntos</Link>
               
               {isLoggedIn ? <div className="flex items-center space-x-4">
                   <Link to="/profile" className="flex items-center space-x-2 text-white">
