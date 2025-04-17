@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { MapPin, Navigation, Plus } from 'lucide-react';
+import { MapPin, Navigation, Plus, Home, Briefcase, Pin, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -14,19 +14,22 @@ import {
   DrawerFooter,
   DrawerClose
 } from '@/components/ui/drawer';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+import { ParkingSpot } from '@/pages/MapPage';
 
 // Clave de API de Google Maps
 const API_KEY = 'AIzaSyDPSvqhfdHJRfCEqYk0WzZ6_LLRHXPDcZ8';
-
-// Datos de ejemplo para plazas de aparcamiento
-const mockParkingSpots = [
-  { id: 1, lat: 41.3851, lng: 2.1734, available: true, updatedAt: 'hace 10 mins' },
-  { id: 2, lat: 41.3870, lng: 2.1698, available: true, updatedAt: 'hace 15 mins' },
-  { id: 3, lat: 41.3917, lng: 2.1649, available: true, updatedAt: 'hace 30 mins' },
-  { id: 4, lat: 41.3948, lng: 2.1545, available: true, updatedAt: 'hace 1 hora' },
-  { id: 5, lat: 41.4012, lng: 2.1741, available: true, updatedAt: 'hace 2 horas' },
-];
 
 // Estilo del contenedor del mapa
 const containerStyle = {
@@ -40,11 +43,28 @@ const center = {
   lng: 2.1734
 };
 
-export const MapComponent = () => {
+// Tipo para los puntos de interés
+interface PointOfInterest {
+  id: number;
+  lat: number;
+  lng: number;
+  name: string;
+  type: 'home' | 'work' | 'favorite';
+}
+
+interface MapComponentProps {
+  parkingSpots: ParkingSpot[];
+}
+
+export const MapComponent = ({ parkingSpots }: MapComponentProps) => {
   const { toast } = useToast();
   const [openSpotInfoId, setOpenSpotInfoId] = useState<number | null>(null);
   const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
-  const [selectedSpot, setSelectedSpot] = useState<any>(null);
+  const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null);
+  const [pointsOfInterest, setPointsOfInterest] = useState<PointOfInterest[]>([]);
+  const [showAddPoiDialog, setShowAddPoiDialog] = useState(false);
+  const [newPoiName, setNewPoiName] = useState('');
+  const [newPoiType, setNewPoiType] = useState<'home' | 'work' | 'favorite'>('home');
   
   // Cargar la API de Google Maps
   const { isLoaded, loadError } = useJsApiLoader({
@@ -64,8 +84,8 @@ export const MapComponent = () => {
   };
   
   const toggleSpotInfo = (spotId: number) => {
-    const spot = mockParkingSpots.find(s => s.id === spotId);
-    setSelectedSpot(spot);
+    const spot = parkingSpots.find(s => s.id === spotId);
+    setSelectedSpot(spot || null);
     setOpenSpotInfoId(openSpotInfoId === spotId ? null : spotId);
   };
 
@@ -103,6 +123,63 @@ export const MapComponent = () => {
         description: "Tu navegador no soporta geolocalización.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleAddPointOfInterest = () => {
+    if (!userPosition) {
+      toast({
+        title: "Error",
+        description: "Necesitamos tu ubicación para añadir un punto de interés.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newPoiName.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa un nombre para el punto de interés.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newPoi: PointOfInterest = {
+      id: Date.now(),
+      lat: userPosition.lat,
+      lng: userPosition.lng,
+      name: newPoiName,
+      type: newPoiType,
+    };
+
+    setPointsOfInterest(prev => [...prev, newPoi]);
+    setShowAddPoiDialog(false);
+    setNewPoiName('');
+
+    toast({
+      title: "Punto de interés añadido",
+      description: `${newPoiName} ha sido añadido a tus lugares.`,
+    });
+  };
+
+  const handleDeletePoi = (poiId: number) => {
+    setPointsOfInterest(prev => prev.filter(poi => poi.id !== poiId));
+    
+    toast({
+      title: "Punto eliminado",
+      description: "El punto de interés ha sido eliminado.",
+    });
+  };
+
+  const getPoiIcon = (type: 'home' | 'work' | 'favorite') => {
+    switch (type) {
+      case 'home':
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23eab308' stroke='%23854d0e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3Cpolyline points='9 22 9 12 15 12 15 22'/%3E%3C/svg%3E";
+      case 'work':
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23a855f7' stroke='%236b21a8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='7' rx='2' ry='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/svg%3E";
+      case 'favorite':
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23ef4444' stroke='%23991b1b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z'/%3E%3C/svg%3E";
     }
   };
 
@@ -159,8 +236,8 @@ export const MapComponent = () => {
             />
           )}
           
-          {/* Marcadores de plazas de aparcamiento */}
-          {mockParkingSpots.map((spot) => (
+          {/* Marcadores de plazas de aparcamiento (solo las disponibles) */}
+          {parkingSpots.filter(spot => spot.available).map((spot) => (
             <Marker
               key={spot.id}
               position={{ lat: spot.lat, lng: spot.lng }}
@@ -169,6 +246,25 @@ export const MapComponent = () => {
                 url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23dbeafe' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E",
                 scaledSize: new google.maps.Size(36, 36),
                 anchor: new google.maps.Point(18, 36),
+              }}
+            />
+          ))}
+
+          {/* Marcadores para puntos de interés */}
+          {pointsOfInterest.map((poi) => (
+            <Marker
+              key={poi.id}
+              position={{ lat: poi.lat, lng: poi.lng }}
+              onClick={() => {
+                toast({
+                  title: poi.name,
+                  description: `Punto de interés: ${poi.type === 'home' ? 'Casa' : poi.type === 'work' ? 'Trabajo' : 'Favorito'}`
+                });
+              }}
+              icon={{
+                url: getPoiIcon(poi.type),
+                scaledSize: new google.maps.Size(36, 36),
+                anchor: new google.maps.Point(18, 18),
               }}
             />
           ))}
@@ -184,6 +280,14 @@ export const MapComponent = () => {
             onClick={handleUseCurrentLocation}
           >
             <Navigation size={20} />
+          </Button>
+          
+          <Button
+            size="icon"
+            className="h-12 w-12 rounded-full bg-emerald-500 shadow-lg"
+            onClick={() => setShowAddPoiDialog(true)}
+          >
+            <Pin size={20} />
           </Button>
           
           <Link to="/report">
@@ -244,6 +348,107 @@ export const MapComponent = () => {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+      {/* Diálogo para añadir puntos de interés */}
+      <AlertDialog open={showAddPoiDialog} onOpenChange={setShowAddPoiDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Añadir Punto de Interés</AlertDialogTitle>
+            <AlertDialogDescription>
+              Añade un lugar donde sueles buscar aparcamiento.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="flex flex-col space-y-2">
+              <label htmlFor="poi-name" className="text-sm font-medium">
+                Nombre del lugar
+              </label>
+              <Input
+                id="poi-name"
+                placeholder="Ej: Mi casa, Mi trabajo..."
+                value={newPoiName}
+                onChange={(e) => setNewPoiName(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <label className="text-sm font-medium">Tipo de lugar</label>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  variant={newPoiType === 'home' ? 'default' : 'outline'}
+                  className={`flex-1 ${newPoiType === 'home' ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
+                  onClick={() => setNewPoiType('home')}
+                >
+                  <Home className="mr-2 h-4 w-4" />
+                  Casa
+                </Button>
+                <Button
+                  type="button"
+                  variant={newPoiType === 'work' ? 'default' : 'outline'}
+                  className={`flex-1 ${newPoiType === 'work' ? 'bg-purple-500 hover:bg-purple-600' : ''}`}
+                  onClick={() => setNewPoiType('work')}
+                >
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  Trabajo
+                </Button>
+                <Button
+                  type="button"
+                  variant={newPoiType === 'favorite' ? 'default' : 'outline'}
+                  className={`flex-1 ${newPoiType === 'favorite' ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                  onClick={() => setNewPoiType('favorite')}
+                >
+                  <Star className="mr-2 h-4 w-4" />
+                  Favorito
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleAddPointOfInterest}>
+              Añadir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Lista de puntos de interés guardados */}
+      {pointsOfInterest.length > 0 && (
+        <div className="absolute bottom-20 left-4 bg-white shadow-lg rounded-lg p-2 max-h-48 overflow-y-auto w-48">
+          <h3 className="text-sm font-semibold mb-2 px-2">Mis lugares</h3>
+          <ul className="space-y-1">
+            {pointsOfInterest.map(poi => (
+              <li key={poi.id} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded text-xs">
+                <button 
+                  className="flex items-center flex-grow text-left"
+                  onClick={() => {
+                    if (mapRef.current) {
+                      mapRef.current.panTo({ lat: poi.lat, lng: poi.lng });
+                      mapRef.current.setZoom(16);
+                    }
+                  }}
+                >
+                  {poi.type === 'home' && <Home size={14} className="mr-1 text-yellow-500" />}
+                  {poi.type === 'work' && <Briefcase size={14} className="mr-1 text-purple-500" />}
+                  {poi.type === 'favorite' && <Star size={14} className="mr-1 text-red-500" />}
+                  <span className="truncate">{poi.name}</span>
+                </button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6"
+                  onClick={() => handleDeletePoi(poi.id)}
+                >
+                  <X size={12} />
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

@@ -18,8 +18,8 @@ interface ParkingSpotDialogProps {
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onParked: () => void;
-  onContinueSearching: () => void;
+  onParked: (spotId: number) => void;
+  onContinueSearching: (spotId: number) => void;
 }
 
 export function ParkingSpotDialog({
@@ -41,14 +41,14 @@ export function ParkingSpotDialog({
         </DialogHeader>
         <div className="grid grid-cols-2 gap-4 py-4">
           <Button
-            onClick={onParked}
+            onClick={() => onParked(spot.id)}
             className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700"
           >
             <Check className="h-5 w-5" />
             He aparcado
           </Button>
           <Button
-            onClick={onContinueSearching}
+            onClick={() => onContinueSearching(spot.id)}
             variant="outline"
             className="flex items-center justify-center gap-2"
           >
