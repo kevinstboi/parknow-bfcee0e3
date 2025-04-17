@@ -8,10 +8,10 @@ const ReportPage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Informar al usuario sobre la necesidad de permitir acceso a la ubicación
+    // Informar al usuario sobre la necesidad de permitir acceso a la ubicación y orientación
     toast({
-      title: "Acceso a ubicación requerido",
-      description: "Para reportar una plaza, necesitamos acceder a tu ubicación actual."
+      title: "Acceso requerido",
+      description: "Para reportar una plaza, necesitamos acceder a tu ubicación actual y la orientación del dispositivo."
     });
   }, []);
 
