@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Navigation, Compass } from 'lucide-react';
+import { Navigation, Compass, MapPin, MapPinOff } from 'lucide-react';
 
 export const ReportSpotForm = () => {
   const { toast } = useToast();
@@ -12,6 +12,9 @@ export const ReportSpotForm = () => {
   const [locationError, setLocationError] = useState('');
   const [heading, setHeading] = useState<number | null>(null);
   const [compassAvailable, setCompassAvailable] = useState(false);
+  const [isOnStreet, setIsOnStreet] = useState(false);
+  const [lastMotionTimestamp, setLastMotionTimestamp] = useState<number | null>(null);
+  const [motionDataCount, setMotionDataCount] = useState(0);
   
   useEffect(() => {
     // Check if device orientation is supported
@@ -42,9 +45,33 @@ export const ReportSpotForm = () => {
       setCompassAvailable(false);
     }
     
+    // Check for device motion support to determine if user is on street
+    if (window.DeviceMotionEvent) {
+      // Request motion permission for iOS devices
+      if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
+        (DeviceMotionEvent as any).requestPermission()
+          .then((permissionState: string) => {
+            if (permissionState === 'granted') {
+              window.addEventListener('devicemotion', handleMotion);
+            } else {
+              toast({
+                title: "Acceso a sensores de movimiento denegado",
+                description: "No podemos verificar si estás en la calle.",
+                variant: "destructive"
+              });
+            }
+          })
+          .catch(console.error);
+      } else {
+        // For non-iOS devices
+        window.addEventListener('devicemotion', handleMotion);
+      }
+    }
+    
     // Cleanup
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
+      window.removeEventListener('devicemotion', handleMotion);
     };
   }, []);
   
@@ -52,6 +79,44 @@ export const ReportSpotForm = () => {
     // Intentar obtener la ubicación del usuario al cargar el componente
     getUserLocation();
   }, []);
+
+  const handleMotion = (event: DeviceMotionEvent) => {
+    const now = Date.now();
+    
+    // Only process if we have acceleration data
+    if (event.acceleration && 
+        (event.acceleration.x !== null || 
+         event.acceleration.y !== null || 
+         event.acceleration.z !== null)) {
+      
+      setMotionDataCount(prev => prev + 1);
+      
+      // Get acceleration magnitude (excluding gravity)
+      const accelX = event.acceleration.x || 0;
+      const accelY = event.acceleration.y || 0;
+      const accelZ = event.acceleration.z || 0;
+      
+      const accelMagnitude = Math.sqrt(accelX * accelX + accelY * accelY + accelZ * accelZ);
+      
+      // Threshold to determine significant motion (someone walking)
+      const MOTION_THRESHOLD = 1.2; // m/s²
+      
+      if (accelMagnitude > MOTION_THRESHOLD) {
+        setLastMotionTimestamp(now);
+      }
+      
+      // Check if there was significant motion in the last 2 minutes
+      const TWO_MINUTES = 2 * 60 * 1000;
+      if (lastMotionTimestamp && (now - lastMotionTimestamp) < TWO_MINUTES) {
+        setIsOnStreet(true);
+      } else {
+        // If no significant motion for 2 minutes, probably not on street
+        if (motionDataCount > 10) { // Make sure we've received enough samples
+          setIsOnStreet(false);
+        }
+      }
+    }
+  };
   
   const handleOrientation = (event: DeviceOrientationEvent) => {
     // Alpha is the compass direction the device is facing in degrees
@@ -128,6 +193,15 @@ export const ReportSpotForm = () => {
       return;
     }
     
+    if (!isOnStreet) {
+      toast({
+        title: "Error",
+        description: "Para reportar una plaza, debes estar en la calle.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     // Data that would be sent to an API
@@ -136,7 +210,8 @@ export const ReportSpotForm = () => {
       heading: heading,
       headingLabel: getHeadingLabel(heading),
       notes: notes,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      isOnStreet: isOnStreet
     };
     
     console.log("Sending report data:", reportData);
@@ -200,6 +275,31 @@ export const ReportSpotForm = () => {
         </div>
       </div>
       
+      {/* Street Verification Section */}
+      <div className="mb-6">
+        <label className="block text-gray-700 mb-2 font-medium">Estado</label>
+        
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center">
+            <div className={`flex items-center px-4 py-3 rounded-full ${isOnStreet ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'} w-full`}>
+              {isOnStreet 
+                ? <MapPin size={18} className="mr-2" />
+                : <MapPinOff size={18} className="mr-2" />}
+              {isOnStreet 
+                ? 'En la calle (verificado)' 
+                : 'No estás en la calle'}
+            </div>
+          </div>
+          
+          {!isOnStreet && (
+            <div className="text-sm text-amber-500">
+              <p>Debes estar caminando en la calle para reportar una plaza.</p>
+              <p>El sistema detectará automáticamente cuando estés en movimiento.</p>
+            </div>
+          )}
+        </div>
+      </div>
+      
       {/* Compass Section */}
       <div className="mb-6">
         <label className="block text-gray-700 mb-2 font-medium">Orientación</label>
@@ -257,7 +357,7 @@ export const ReportSpotForm = () => {
       <Button
         type="submit"
         className="w-full bg-barcelona-orange hover:bg-barcelona-orange/90 text-white font-medium py-3 rounded-full"
-        disabled={isSubmitting || !userLocation}
+        disabled={isSubmitting || !userLocation || !isOnStreet}
       >
         {isSubmitting ? (
           <div className="flex items-center">
@@ -275,3 +375,4 @@ export const ReportSpotForm = () => {
     </form>
   );
 };
+
