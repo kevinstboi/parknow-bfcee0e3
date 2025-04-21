@@ -4,10 +4,17 @@ import { Link } from 'react-router-dom';
 import { MapComponent } from '@/components/MapComponent';
 import { SpotCard } from '@/components/SpotCard';
 import { Button } from '@/components/ui/button';
-import { MapPin, Plus, Navigation, Search, User } from 'lucide-react';
+import { 
+  MapPin, 
+  Plus, 
+  Navigation, 
+  Search, 
+  User, 
+  Map as MapIcon, 
+  Award 
+} from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
-// Mock data for recently reported spots
 const recentSpots = [
   {
     id: 1,
@@ -32,7 +39,6 @@ const recentSpots = [
   }
 ];
 
-// Mock data for parking spots with coordinates (for the map preview)
 const previewParkingSpots = [
   { id: 1, lat: 41.3851, lng: 2.1734, location: "Carrer de Mallorca, 401", available: true, updatedAt: 'hace 10 mins' },
   { id: 2, lat: 41.3870, lng: 2.1698, location: "Plaça de Catalunya", available: true, updatedAt: 'hace 15 mins' },
@@ -43,7 +49,6 @@ const Index = () => {
   return (
     <Layout>
       <div className="container px-4 mx-auto py-6">
-        {/* Hero Section */}
         <section className="mb-12">
           <div className="bg-gradient-to-r from-barcelona-blue to-blue-600 rounded-xl p-6 md:p-10 text-white">
             <div className="md:max-w-2xl">
@@ -71,12 +76,11 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Main Actions Section */}
         <section className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-barcelona-blue/10 flex items-center justify-center mb-4">
-                <Search className="text-barcelona-blue h-6 w-6" />
+                <MapIcon className="text-barcelona-blue h-6 w-6" />
               </div>
               <CardTitle>Buscar Plaza</CardTitle>
               <CardDescription>Encuentra aparcamiento cercano en tiempo real</CardDescription>
@@ -94,7 +98,7 @@ const Index = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-barcelona-orange/10 flex items-center justify-center mb-4">
-                <Plus className="text-barcelona-orange h-6 w-6" />
+                <MapPin className="text-barcelona-orange h-6 w-6" />
               </div>
               <CardTitle>Reportar Plaza</CardTitle>
               <CardDescription>Ayuda a otros usuarios reportando plazas libres</CardDescription>
@@ -112,7 +116,7 @@ const Index = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                <User className="text-emerald-500 h-6 w-6" />
+                <Award className="text-emerald-500 h-6 w-6" />
               </div>
               <CardTitle>Mis Puntos</CardTitle>
               <CardDescription>Gestiona tus puntos y nivel de usuario</CardDescription>
@@ -128,7 +132,6 @@ const Index = () => {
           </Card>
         </section>
         
-        {/* Map Preview Section with Card */}
         <section className="mb-12">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -149,7 +152,6 @@ const Index = () => {
           </Card>
         </section>
         
-        {/* Recent Spots Section with Card */}
         <section className="mb-12">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -179,7 +181,6 @@ const Index = () => {
           </Card>
         </section>
         
-        {/* CTA Section */}
         <section>
           <div className="bg-gradient-to-r from-barcelona-orange to-orange-500 rounded-xl p-6 md:p-10 text-white text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">¿Listo para Encontrar Aparcamiento en Barcelona?</h2>
