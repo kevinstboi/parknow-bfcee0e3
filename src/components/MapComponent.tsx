@@ -56,7 +56,7 @@ interface MapComponentProps {
   parkingSpots: ParkingSpot[];
 }
 
-export const MapComponent = ({ parkingSpots }: MapComponentProps) => {
+export const MapComponent = ({ parkingSpots = [] }: MapComponentProps) => {
   const { toast } = useToast();
   const [openSpotInfoId, setOpenSpotInfoId] = useState<number | null>(null);
   const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
@@ -205,6 +205,11 @@ export const MapComponent = ({ parkingSpots }: MapComponentProps) => {
     );
   }
 
+  // Ensure parkingSpots is an array even if it's undefined
+  const availableSpots = Array.isArray(parkingSpots) 
+    ? parkingSpots.filter(spot => spot.available) 
+    : [];
+
   return (
     <div className="relative h-[calc(100vh-15rem)] md:h-[calc(100vh-13rem)] bg-gray-100 rounded-xl overflow-hidden">
       {/* Contenedor del Mapa */}
@@ -237,7 +242,7 @@ export const MapComponent = ({ parkingSpots }: MapComponentProps) => {
           )}
           
           {/* Marcadores de plazas de aparcamiento (solo las disponibles) */}
-          {parkingSpots.filter(spot => spot.available).map((spot) => (
+          {availableSpots.map((spot) => (
             <Marker
               key={spot.id}
               position={{ lat: spot.lat, lng: spot.lng }}

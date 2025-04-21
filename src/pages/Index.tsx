@@ -32,6 +32,13 @@ const recentSpots = [
   }
 ];
 
+// Mock data for parking spots with coordinates (for the map preview)
+const previewParkingSpots = [
+  { id: 1, lat: 41.3851, lng: 2.1734, location: "Carrer de Mallorca, 401", available: true, updatedAt: 'hace 10 mins' },
+  { id: 2, lat: 41.3870, lng: 2.1698, location: "Plaça de Catalunya", available: true, updatedAt: 'hace 15 mins' },
+  { id: 3, lat: 41.3917, lng: 2.1649, location: "Passeig de Gràcia", available: true, updatedAt: 'hace 30 mins' },
+];
+
 const Index = () => {
   return (
     <Layout>
@@ -76,7 +83,9 @@ const Index = () => {
             </Link>
           </div>
           <div className="h-80 md:h-96">
-            <MapComponent />
+            <MapComponent 
+              parkingSpots={previewParkingSpots}
+            />
           </div>
         </section>
         
