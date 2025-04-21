@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { Layout } from '@/components/Layout';
 import { Link } from 'react-router-dom';
 import { MapComponent } from '@/components/MapComponent';
 import { SpotCard } from '@/components/SpotCard';
 import { Button } from '@/components/ui/button';
-import { MapPin, Plus, Navigation, Search } from 'lucide-react';
+import { MapPin, Plus, Navigation, Search, User } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 // Mock data for recently reported spots
 const recentSpots = [
@@ -71,85 +71,112 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Map Preview Section */}
-        <section className="mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Mapa de Aparcamiento</h2>
-            <Link to="/map" className="text-barcelona-blue font-medium hover:underline flex items-center">
-              Mapa Completo
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 ml-1">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </Link>
-          </div>
-          <div className="h-80 md:h-96">
-            <MapComponent 
-              parkingSpots={previewParkingSpots}
-            />
-          </div>
+        {/* Main Actions Section */}
+        <section className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-barcelona-blue/10 flex items-center justify-center mb-4">
+                <Search className="text-barcelona-blue h-6 w-6" />
+              </div>
+              <CardTitle>Buscar Plaza</CardTitle>
+              <CardDescription>Encuentra aparcamiento cercano en tiempo real</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Link to="/map">
+                <Button className="bg-barcelona-blue hover:bg-barcelona-blue/90 rounded-full">
+                  <Search className="mr-2 h-4 w-4" />
+                  Abrir Mapa
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-barcelona-orange/10 flex items-center justify-center mb-4">
+                <Plus className="text-barcelona-orange h-6 w-6" />
+              </div>
+              <CardTitle>Reportar Plaza</CardTitle>
+              <CardDescription>Ayuda a otros usuarios reportando plazas libres</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Link to="/report">
+                <Button className="bg-barcelona-orange hover:bg-barcelona-orange/90 rounded-full">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Reportar
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
+                <User className="text-emerald-500 h-6 w-6" />
+              </div>
+              <CardTitle>Mis Puntos</CardTitle>
+              <CardDescription>Gestiona tus puntos y nivel de usuario</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Link to="/points">
+                <Button className="bg-emerald-500 hover:bg-emerald-600 rounded-full">
+                  <User className="mr-2 h-4 w-4" />
+                  Ver Puntos
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </section>
         
-        {/* Recent Spots Section */}
+        {/* Map Preview Section with Card */}
         <section className="mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Reportados Recientemente</h2>
-            <Link to="/map" className="text-barcelona-blue font-medium hover:underline flex items-center">
-              Ver Todos
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 ml-1">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recentSpots.map((spot) => (
-              <SpotCard
-                key={spot.id}
-                id={spot.id}
-                location={spot.location}
-                distance={spot.distance}
-                availableSince={spot.availableSince}
-                reportedBy={spot.reportedBy}
-              />
-            ))}
-          </div>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Mapa de Aparcamiento</CardTitle>
+                <CardDescription>Vista previa de plazas disponibles</CardDescription>
+              </div>
+              <Link to="/map" className="text-barcelona-blue font-medium hover:underline flex items-center">
+                Mapa Completo
+                <Navigation className="w-4 h-4 ml-1" />
+              </Link>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80 md:h-96 rounded-lg overflow-hidden">
+                <MapComponent parkingSpots={previewParkingSpots} />
+              </div>
+            </CardContent>
+          </Card>
         </section>
         
-        {/* Features Section */}
+        {/* Recent Spots Section with Card */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-center">Cómo Funciona</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-              <div className="bg-barcelona-blue/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search size={24} className="text-barcelona-blue" />
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Reportados Recientemente</CardTitle>
+                <CardDescription>Últimas plazas libres reportadas</CardDescription>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Encuentra Aparcamiento</h3>
-              <p className="text-gray-600">
-                Busca plazas de aparcamiento disponibles cerca de tu destino en Barcelona.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-              <div className="bg-barcelona-orange/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Navigation size={24} className="text-barcelona-orange" />
+              <Link to="/map" className="text-barcelona-blue font-medium hover:underline flex items-center">
+                Ver Todos
+                <Navigation className="w-4 h-4 ml-1" />
+              </Link>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recentSpots.map((spot) => (
+                  <SpotCard
+                    key={spot.id}
+                    id={spot.id}
+                    location={spot.location}
+                    distance={spot.distance}
+                    availableSince={spot.availableSince}
+                    reportedBy={spot.reportedBy}
+                  />
+                ))}
               </div>
-              <h3 className="text-lg font-semibold mb-2">Navega Hasta Allí</h3>
-              <p className="text-gray-600">
-                Obtén direcciones a la plaza de aparcamiento disponible con solo un toque.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-              <div className="bg-barcelona-blue/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin size={24} className="text-barcelona-blue" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Reporta Plazas</h3>
-              <p className="text-gray-600">
-                Ayuda a la comunidad reportando plazas libres que encuentres y gana puntos.
-              </p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </section>
         
         {/* CTA Section */}
