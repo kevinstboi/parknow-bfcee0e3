@@ -2,45 +2,83 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useAuth } from '@/context/AuthContext';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 interface AuthFormProps {
   type: 'login' | 'signup';
 }
 
+// Schema para validación de formulario
+const loginSchema = z.object({
+  email: z.string().email({ message: 'Introduce un correo electrónico válido' }),
+  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+});
+
+const signupSchema = loginSchema.extend({
+  username: z.string().min(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
+    .max(20, { message: 'El nombre de usuario no puede tener más de 20 caracteres' })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: 'El nombre de usuario solo puede contener letras, números y guiones bajos' }),
+  full_name: z.string().min(2, { message: 'El nombre completo es requerido' }),
+});
+
 export const AuthForm = ({ type }: AuthFormProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Definir el esquema basado en el tipo de formulario
+  const schema = type === 'login' ? loginSchema : signupSchema;
+  
+  // Configurar react-hook-form con validación zod
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: '',
+      password: '',
+      ...(type === 'signup' && { username: '', full_name: '' }),
+    },
+  });
+  
+  const onSubmit = async (data: z.infer<typeof schema>) => {
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      
+    try {
       if (type === 'login') {
-        toast({
-          title: "¡Sesión iniciada correctamente!",
-          description: "Bienvenido de nuevo a ParkBCN.",
-        });
+        await signIn(data.email, data.password);
       } else {
-        toast({
-          title: "¡Cuenta creada correctamente!",
-          description: "Bienvenido a ParkBCN. ¡Comienza a encontrar y reportar plazas de aparcamiento!",
-        });
+        // TypeScript no infiere correctamente los campos adicionales en modo signup
+        const signupData = data as z.infer<typeof signupSchema>;
+        await signUp(
+          signupData.email,
+          signupData.password,
+          {
+            username: signupData.username,
+            full_name: signupData.full_name,
+          }
+        );
       }
       
-      // Navigate to homepage after successful auth
+      // Navegar a la página principal
       navigate('/');
-    }, 1500);
+    } catch (error) {
+      // Los errores ya se manejan en el contexto de autenticación
+      console.error('Error en autenticación:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -60,51 +98,83 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         </p>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {type === 'signup' && (
-          <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Nombre Completo
-            </label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Introduce tu nombre"
-              required
-              className="rounded-lg"
-            />
-          </div>
-        )}
-        
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Correo Electrónico
-          </label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Introduce tu correo electrónico"
-            required
-            className="rounded-lg"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {type === 'signup' && (
+            <>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Nombre de Usuario</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Introduce tu nombre de usuario"
+                        className="rounded-lg"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="full_name"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Nombre Completo</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Introduce tu nombre completo"
+                        className="rounded-lg"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Correo Electrónico</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="email"
+                    placeholder="Introduce tu correo electrónico"
+                    className="rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        
-        <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Contraseña
-          </label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={type === 'login' ? 'Introduce tu contraseña' : 'Crea una contraseña'}
-            required
-            className="rounded-lg"
+          
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Contraseña</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="password"
+                    placeholder={type === 'login' ? 'Introduce tu contraseña' : 'Crea una contraseña'}
+                    className="rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
           
           {type === 'login' && (
@@ -114,23 +184,23 @@ export const AuthForm = ({ type }: AuthFormProps) => {
               </Link>
             </div>
           )}
-        </div>
-        
-        <Button
-          type="submit"
-          className="w-full bg-barcelona-blue hover:bg-barcelona-blue/90 text-white py-2 rounded-lg"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <div className="flex items-center justify-center">
-              <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mr-2"></div>
-              {type === 'login' ? 'Iniciando Sesión...' : 'Creando Cuenta...'}
-            </div>
-          ) : (
-            type === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'
-          )}
-        </Button>
-      </form>
+          
+          <Button
+            type="submit"
+            className="w-full bg-barcelona-blue hover:bg-barcelona-blue/90 text-white py-2 rounded-lg"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mr-2"></div>
+                {type === 'login' ? 'Iniciando Sesión...' : 'Creando Cuenta...'}
+              </div>
+            ) : (
+              type === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'
+            )}
+          </Button>
+        </form>
+      </Form>
       
       <div className="mt-6 text-center">
         <p className="text-gray-600">

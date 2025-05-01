@@ -1,30 +1,27 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, MapPin, User, LogOut, Home, Map } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
-  const {
-    toast
-  } = useToast();
+  const { user, signOut } = useAuth();
 
-  // Mock authentication for now
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    toast({
-      title: "Sesión cerrada correctamente",
-      description: "Has cerrado sesión en tu cuenta."
-    });
+  
+  const handleLogout = async () => {
+    await signOut();
   };
+  
   const isActive = (path: string) => {
     return location.pathname === path ? "bg-barcelona-blue/20" : "";
   };
+  
   return <nav className="bg-barcelona-blue text-white shadow-md sticky top-0 z-30">
       <div className="px-4 py-3 container mx-auto">
         <div className="flex justify-between items-center">
@@ -53,7 +50,7 @@ export const Navbar = () => {
                 <span>Mis Puntos</span>
               </Link>
               
-              {isLoggedIn ? <div className="flex items-center space-x-4 border-l pl-4 ml-2">
+              {user ? <div className="flex items-center space-x-4 border-l pl-4 ml-2">
                   <Button variant="ghost" className="flex items-center space-x-2 text-white hover:text-red-300" onClick={handleLogout}>
                     <LogOut size={20} />
                     <span>Cerrar Sesión</span>
@@ -100,10 +97,10 @@ export const Navbar = () => {
                 <span>Mis Puntos</span>
               </Link>
               
-              {isLoggedIn ? <button className="flex items-center space-x-2 px-4 py-3 rounded-lg text-red-300 hover:bg-barcelona-blue/20" onClick={() => {
-            handleLogout();
-            setIsOpen(false);
-          }}>
+              {user ? <button className="flex items-center space-x-2 px-4 py-3 rounded-lg text-red-300 hover:bg-barcelona-blue/20" onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}>
                   <LogOut size={20} />
                   <span>Cerrar Sesión</span>
                 </button> : <div className="flex flex-col space-y-2 pt-2 px-4">
