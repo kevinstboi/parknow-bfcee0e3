@@ -115,8 +115,10 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {type === 'signup' && (
             <>
+              {/* Para corregir el error, necesitamos usar "as any" para el control en este caso
+                  ya que TypeScript no puede inferir correctamente los campos específicos del formulario */}
               <FormField
-                control={form.control}
+                control={form.control as any}
                 name="username"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
@@ -133,7 +135,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
                 )}
               />
               <FormField
-                control={form.control}
+                control={form.control as any}
                 name="full_name"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
