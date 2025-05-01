@@ -34,33 +34,46 @@ const signupSchema = loginSchema.extend({
   full_name: z.string().min(2, { message: 'El nombre completo es requerido' }),
 });
 
+// Define type for the form data based on the schema
+type LoginFormValues = z.infer<typeof loginSchema>;
+type SignupFormValues = z.infer<typeof signupSchema>;
+
 export const AuthForm = ({ type }: AuthFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   
-  // Definir el esquema basado en el tipo de formulario
-  const schema = type === 'login' ? loginSchema : signupSchema;
-  
-  // Configurar react-hook-form con validación zod
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  // Configurar react-hook-form con validación zod basado en el tipo de formulario
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
-      ...(type === 'signup' && { username: '', full_name: '' }),
+    },
+  });
+
+  const signupForm = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      username: '',
+      full_name: '',
     },
   });
   
-  const onSubmit = async (data: z.infer<typeof schema>) => {
+  // Use the appropriate form based on type
+  const form = type === 'login' ? loginForm : signupForm;
+  
+  const onSubmit = async (data: LoginFormValues | SignupFormValues) => {
     setIsSubmitting(true);
     
     try {
       if (type === 'login') {
         await signIn(data.email, data.password);
       } else {
-        // TypeScript no infiere correctamente los campos adicionales en modo signup
-        const signupData = data as z.infer<typeof signupSchema>;
+        // TypeScript knows this is SignupFormValues due to the check above
+        const signupData = data as SignupFormValues;
         await signUp(
           signupData.email,
           signupData.password,
